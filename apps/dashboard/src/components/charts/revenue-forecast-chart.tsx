@@ -163,11 +163,11 @@ export function RevenueForecastChart({
   const tickFormatter = createCompactTickFormatter();
 
   // Calculate margin using the utility hook
-  // Get max value from both actual and forecasted data
-  const maxValues = normalizedData.map((d) => ({
-    maxValue: Math.max(d.actual ?? 0, d.forecasted ?? 0),
+  // Use the maximum value from actual or forecasted for margin calculation
+  const marginData = normalizedData.map((d) => ({
+    value: Math.max(d.actual ?? 0, d.forecasted ?? 0),
   }));
-  const { marginLeft } = useChartMargin(maxValues, "maxValue", tickFormatter);
+  const { marginLeft } = useChartMargin(marginData, "value", tickFormatter);
 
   // Calculate dynamic domain based on data
   const yAxisDomain = useMemo(() => {
@@ -195,7 +195,7 @@ export function RevenueForecastChart({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={normalizedData}
-            margin={{ top: 20, right: 6, left: -marginLeft, bottom: 10 }}
+            margin={{ top: 20, right: 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid
               strokeDasharray="3 3"
@@ -206,38 +206,41 @@ export function RevenueForecastChart({
               axisLine={false}
               tickLine={false}
               tick={{
-                fontSize: 12,
                 fill: "var(--chart-axis-text)",
+                fontSize: 10,
+                fontFamily: commonChartConfig.fontFamily,
               }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               tick={{
-                fontSize: 11,
                 fill: "var(--chart-axis-text)",
+                fontSize: 10,
                 fontFamily: commonChartConfig.fontFamily,
               }}
               tickFormatter={tickFormatter}
               domain={[yAxisDomain.min, yAxisDomain.max]}
             />
-            {forecastStartMonth && (
-              <ReferenceLine
-                x={forecastStartMonth}
-                stroke="var(--chart-reference-line-stroke)"
-                strokeWidth={1}
-                label={{
-                  value: "Forecast Start",
-                  position: "top",
-                  fill: "var(--chart-reference-label)",
-                  style: {
-                    fontSize: "10px",
+            {forecastStartIndexFinal !== null &&
+              forecastStartIndexFinal !== undefined &&
+              forecastStartIndexFinal >= 0 && (
+                <ReferenceLine
+                  x={forecastStartIndexFinal}
+                  stroke="var(--chart-reference-line-stroke)"
+                  strokeWidth={1}
+                  label={{
+                    value: "Forecast Start",
+                    position: "top",
                     fill: "var(--chart-reference-label)",
-                    textAnchor: "start",
-                  },
-                }}
-              />
-            )}
+                    style: {
+                      fontSize: "10px",
+                      fill: "var(--chart-reference-label)",
+                      textAnchor: "start",
+                    },
+                  }}
+                />
+              )}
             <Tooltip
               content={
                 <CustomTooltip
@@ -260,7 +263,7 @@ export function RevenueForecastChart({
               isAnimationActive={false}
             />
             <Line
-              type="linear"
+              type="monotone"
               dataKey="actual"
               stroke="var(--chart-actual-line)"
               strokeWidth={2}
@@ -279,7 +282,7 @@ export function RevenueForecastChart({
               connectNulls={false}
             />
             <Line
-              type="linear"
+              type="monotone"
               dataKey="forecasted"
               stroke="var(--chart-forecast-line)"
               strokeWidth={2}

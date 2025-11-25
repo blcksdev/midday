@@ -13,6 +13,10 @@ import {
   transactions,
   users,
 } from "@db/schema";
+import {
+  CONTRA_REVENUE_CATEGORIES,
+  REVENUE_CATEGORIES,
+} from "@midday/categories";
 import { buildSearchQuery } from "@midday/db/utils/search-query";
 import { logger } from "@midday/logger";
 import { resolveTaxValues } from "@midday/utils/tax";
@@ -29,6 +33,7 @@ import {
   lt,
   lte,
   ne,
+  not,
   or,
   sql,
 } from "drizzle-orm";
@@ -192,7 +197,12 @@ export async function getTransactions(
     whereConditions.push(lt(transactions.amount, 0));
     whereConditions.push(ne(transactions.categorySlug, "transfer"));
   } else if (type === "income") {
-    whereConditions.push(eq(transactions.categorySlug, "income"));
+    whereConditions.push(
+      inArray(transactions.categorySlug, REVENUE_CATEGORIES),
+    );
+    whereConditions.push(
+      not(inArray(transactions.categorySlug, CONTRA_REVENUE_CATEGORIES)),
+    );
   }
 
   // Accounts filter
@@ -219,15 +229,25 @@ export async function getTransactions(
   if (
     filterAmountRange &&
     filterAmountRange.length === 2 &&
-    typeof filterAmountRange[0] === "number" &&
-    typeof filterAmountRange[1] === "number"
+    filterAmountRange[0] != null &&
+    filterAmountRange[1] != null
   ) {
-    whereConditions.push(
-      gte(transactions.amount, Number(filterAmountRange[0])),
-    );
-    whereConditions.push(
-      lte(transactions.amount, Number(filterAmountRange[1])),
-    );
+    let minAmount = Number(filterAmountRange[0]);
+    let maxAmount = Number(filterAmountRange[1]);
+    if (!Number.isNaN(minAmount) && !Number.isNaN(maxAmount)) {
+      // Ensure min <= max
+      if (minAmount > maxAmount) {
+        [minAmount, maxAmount] = [maxAmount, minAmount];
+      }
+
+      // Use COALESCE to handle multi-currency transactions
+      whereConditions.push(
+        sql`COALESCE(${transactions.baseAmount}, ${transactions.amount}) >= ${minAmount}`,
+      );
+      whereConditions.push(
+        sql`COALESCE(${transactions.baseAmount}, ${transactions.amount}) <= ${maxAmount}`,
+      );
+    }
   }
 
   // Specific amount filter (gte/lte)
@@ -759,9 +779,21 @@ export async function getTransactionsAmountFullRangeData(
   db: Database,
   teamId: string,
 ) {
-  return db.executeOnReplica(
-    sql`select * from get_transactions_amount_full_range_data(${teamId})`,
-  );
+  // Use COALESCE(baseAmount, amount) to match the backend filter logic
+  // This ensures the frontend count matches the actual filtered results
+  return db
+    .select({
+      amount: sql<number>`COALESCE(${transactions.baseAmount}, ${transactions.amount})`,
+      currency: sql<string>`COALESCE(${transactions.baseCurrency}, ${transactions.currency})`,
+    })
+    .from(transactions)
+    .where(
+      and(
+        eq(transactions.teamId, teamId),
+        eq(transactions.internal, false),
+        ne(transactions.status, "excluded"),
+      ),
+    );
 }
 
 type GetSimilarTransactionsParams = {

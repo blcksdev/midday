@@ -7,8 +7,7 @@ import { commonChartConfig } from "./chart-utils";
 // Base Chart Wrapper with common styling
 export function BaseChart({
   data,
-
-  margin = { top: 5, right: 5, left: -20, bottom: 5 },
+  margin = { top: 6, right: 6, left: -20, bottom: 6 },
   children,
 }: {
   data: any[];
@@ -132,7 +131,7 @@ export function ChartLegend({
   title,
   items,
 }: {
-  title: string;
+  title?: string;
   items: {
     label: string;
     type: "solid" | "dashed" | "pattern";
@@ -140,10 +139,14 @@ export function ChartLegend({
   }[];
 }) {
   return (
-    <div className="flex items-center justify-between mb-4">
-      <h4 className="text-[18px] font-normal font-serif text-black dark:text-white">
-        {title}
-      </h4>
+    <div
+      className={`flex items-center ${title ? "justify-between" : "justify-end"} mb-4`}
+    >
+      {title && (
+        <h4 className="text-[18px] font-normal font-serif text-black dark:text-white">
+          {title}
+        </h4>
+      )}
       <div className="flex gap-4 items-center">
         {items.map((item, index) => (
           <div

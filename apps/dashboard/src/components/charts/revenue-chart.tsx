@@ -66,7 +66,7 @@ export function RevenueChart({
       {/* Legend */}
       {showLegend && (
         <ChartLegend
-          title="Monthly Revenue"
+          title="Revenue"
           items={[
             { label: "Revenue", type: "solid" },
             ...(showTarget
@@ -80,7 +80,7 @@ export function RevenueChart({
       <BaseChart
         data={data}
         height={height}
-        margin={{ top: 5, right: 5, left: -marginLeft, bottom: 5 }}
+        margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
       >
         <StyledXAxis dataKey="month" />
         <StyledYAxis tickFormatter={tickFormatter} />

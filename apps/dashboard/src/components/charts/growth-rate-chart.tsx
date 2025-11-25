@@ -103,7 +103,7 @@ export function GrowthRateChart({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={data}
-            margin={{ top: 0, right: 6, left: -marginLeft, bottom: 0 }}
+            margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid
               strokeDasharray="3 3"
@@ -150,18 +150,18 @@ export function GrowthRateChart({
               content={<CustomTooltip currency={currency} locale={locale} />}
               wrapperStyle={{ zIndex: 9999 }}
             />
-            {/* Current period bars */}
-            <Bar
-              yAxisId="left"
-              dataKey="currentTotal"
-              fill="var(--chart-bar-fill)"
-              isAnimationActive={false}
-            />
             {/* Previous period bars (with opacity) */}
             <Bar
               yAxisId="left"
               dataKey="previousTotal"
               fill="var(--chart-bar-fill-secondary)"
+              isAnimationActive={false}
+            />
+            {/* Current period bars */}
+            <Bar
+              yAxisId="left"
+              dataKey="currentTotal"
+              fill="var(--chart-bar-fill)"
               isAnimationActive={false}
             />
             {/* Growth rate line */}

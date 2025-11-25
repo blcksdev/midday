@@ -50,8 +50,8 @@ const donutTooltipFormatter = ({
 };
 
 // Gray shades for categories (always use these, ignore color from data)
-const grayShades = [
-  "#ffffff", // White for first category
+export const grayShades = [
+  "hsl(var(--foreground))", // Foreground color - adapts to light/dark mode
   "#707070", // Gray for second
   "#A0A0A0", // Light gray for third
   "#606060", // Dark gray for fourth
