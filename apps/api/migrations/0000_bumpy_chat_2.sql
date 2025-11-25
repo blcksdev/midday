@@ -1,6 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
+
 CREATE TYPE "public"."account_type" AS ENUM('depository', 'credit', 'other_asset', 'loan', 'other_liability');--> statement-breakpoint
 CREATE TYPE "public"."bankProviders" AS ENUM('gocardless', 'plaid', 'teller');--> statement-breakpoint
 CREATE TYPE "public"."bank_providers" AS ENUM('gocardless', 'plaid', 'teller', 'enablebanking', 'pluggy');--> statement-breakpoint
@@ -583,13 +583,14 @@ CREATE INDEX "idx_transactions_fts_vector" ON "transactions" USING gin ("fts_vec
 CREATE INDEX "idx_transactions_id" ON "transactions" USING btree ("id" uuid_ops);--> statement-breakpoint
 CREATE INDEX "idx_transactions_name" ON "transactions" USING btree ("name" text_ops);--> statement-breakpoint
 CREATE INDEX "idx_transactions_name_trigram" ON "transactions" USING gin ("name" gin_trgm_ops);--> statement-breakpoint
-CREATE INDEX "idx_transactions_team_id_date_name" ON "transactions" USING btree ("team_id" date_ops,"date" date_ops,"name" uuid_ops);--> statement-breakpoint
-CREATE INDEX "idx_transactions_team_id_name" ON "transactions" USING btree ("team_id" uuid_ops,"name" uuid_ops);--> statement-breakpoint
+
+CREATE INDEX "idx_transactions_team_id_date_name" ON "transactions" USING btree ("team_id", "date", "name");--> statement-breakpoint
+CREATE INDEX "idx_transactions_team_id_name" ON "transactions" USING btree ("team_id", "name");--> statement-breakpoint
 CREATE INDEX "idx_trgm_name" ON "transactions" USING gist ("name" gist_trgm_ops);--> statement-breakpoint
 CREATE INDEX "transactions_assigned_id_idx" ON "transactions" USING btree ("assigned_id" uuid_ops);--> statement-breakpoint
 CREATE INDEX "transactions_bank_account_id_idx" ON "transactions" USING btree ("bank_account_id" uuid_ops);--> statement-breakpoint
 CREATE INDEX "transactions_category_slug_idx" ON "transactions" USING btree ("category_slug" text_ops);--> statement-breakpoint
-CREATE INDEX "transactions_team_id_date_currency_bank_account_id_category_idx" ON "transactions" USING btree ("team_id" enum_ops,"date" date_ops,"currency" text_ops,"bank_account_id" date_ops,"category" date_ops);--> statement-breakpoint
+CREATE INDEX "transactions_team_id_date_currency_bank_account_id_category_idx" ON "transactions" USING btree ("team_id", "date", "currency","bank_account_id", "category");--> statement-breakpoint
 CREATE INDEX "transactions_team_id_idx" ON "transactions" USING btree ("team_id" uuid_ops);--> statement-breakpoint
 CREATE INDEX "tracker_entries_team_id_idx" ON "tracker_entries" USING btree ("team_id" uuid_ops);--> statement-breakpoint
 CREATE INDEX "bank_accounts_bank_connection_id_idx" ON "bank_accounts" USING btree ("bank_connection_id" uuid_ops);--> statement-breakpoint
@@ -614,7 +615,7 @@ CREATE INDEX "transaction_attachments_team_id_idx" ON "transaction_attachments" 
 CREATE INDEX "transaction_attachments_transaction_id_idx" ON "transaction_attachments" USING btree ("transaction_id" uuid_ops);--> statement-breakpoint
 CREATE INDEX "documents_name_idx" ON "documents" USING btree ("name" text_ops);--> statement-breakpoint
 CREATE INDEX "documents_team_id_idx" ON "documents" USING btree ("team_id" uuid_ops);--> statement-breakpoint
-CREATE INDEX "documents_team_id_parent_id_idx" ON "documents" USING btree ("team_id" text_ops,"parent_id" text_ops);--> statement-breakpoint
+CREATE INDEX "documents_team_id_parent_id_idx" ON "documents" USING btree ("team_id", "parent_id");--> statement-breakpoint
 CREATE INDEX "idx_documents_fts_english" ON "documents" USING gin ("fts_english" tsvector_ops);--> statement-breakpoint
 CREATE INDEX "idx_documents_fts_language" ON "documents" USING gin ("fts_language" tsvector_ops);--> statement-breakpoint
 CREATE INDEX "idx_documents_fts_simple" ON "documents" USING gin ("fts_simple" tsvector_ops);--> statement-breakpoint
@@ -709,4 +710,3 @@ CREATE POLICY "Enable updates for users on team" ON "users_on_team" AS PERMISSIV
 CREATE POLICY "Select for current user teams" ON "users_on_team" AS PERMISSIVE FOR SELECT TO "authenticated";--> statement-breakpoint
 CREATE POLICY "Users on team can be deleted by a member of the team" ON "users_on_team" AS PERMISSIVE FOR DELETE TO public;--> statement-breakpoint
 CREATE POLICY "Users on team can manage categories" ON "transaction_categories" AS PERMISSIVE FOR ALL TO public USING ((team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user)));
-*/

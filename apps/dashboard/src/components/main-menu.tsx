@@ -9,14 +9,19 @@ import { useEffect, useState } from "react";
 
 const icons = {
   "/": () => <Icons.Overview size={20} />,
-  "/transactions": () => <Icons.Transactions size={20} />,
-  "/invoices": () => <Icons.Invoice size={20} />,
-  "/tracker": () => <Icons.Tracker size={20} />,
-  "/customers": () => <Icons.Customers size={20} />,
+  // "/transactions": () => <Icons.Transactions size={20} />,
+  // "/invoices": () => <Icons.Invoice size={20} />,
+  // "/tracker": () => <Icons.Tracker size={20} />,
+  // "/customers": () => <Icons.Customers size={20} />,
+  "/credentials": () => <Icons.Vault size={20} />,
+  "/billing": () => <Icons.ReceiptLong size={20} />,
+  "/contracts": () => <Icons.Description size={20} />,
+  "/onboarding": () => <Icons.Match size={20} />,
   "/vault": () => <Icons.Vault size={20} />,
+  "/support": () => <Icons.Support size={20} />,
   "/settings": () => <Icons.Settings size={20} />,
-  "/apps": () => <Icons.Apps size={20} />,
-  "/inbox": () => <Icons.Inbox2 size={20} />,
+  // "/apps": () => <Icons.Apps size={20} />,
+  // "/inbox": () => <Icons.Inbox2 size={20} />,
 } as const;
 
 const items = [
@@ -24,60 +29,90 @@ const items = [
     path: "/",
     name: "Overview",
   },
+  // {
+  //   path: "/transactions",
+  //   name: "Transactions",
+  //   children: [
+  //     {
+  //       path: "/transactions/categories",
+  //       name: "Categories",
+  //     },
+      //   {
+      //     path: "/transactions?step=connect",
+      //     name: "Connect bank",
+      //   },
+      //   {
+      //     path: "/transactions?step=import&hide=true",
+      //     name: "Import",
+      //   },
+      //   { path: "/transactions?createTransaction=true", name: "Create new" },
+    // ],
+  // },
+  // {
+  //   path: "/inbox",
+  //   name: "Inbox",
+  //   children: [{ path: "/inbox/settings", name: "Settings" }],
+  // },
+  // {
+    // path: "/invoices",
+    // name: "Invoices",
+    // children: [
+    //   { path: "/invoices/products", name: "Products" },
+    //   { path: "/invoices?type=create", name: "Create new" },
+    // ],
+  // },
+  // {
+    // path: "/tracker",
+    // name: "Tracker",
+    // children: [{ path: "/tracker?create=true", name: "Create new" }],
+  // },
+  // {
+    // path: "/customers",
+    // name: "Customers",
+    // children: [{ path: "/customers?createCustomer=true", name: "Create new" }],
+  // },
   {
-    path: "/transactions",
-    name: "Transactions",
-    children: [
-      {
-        path: "/transactions/categories",
-        name: "Categories",
-      },
-      {
-        path: "/transactions?step=connect",
-        name: "Connect bank",
-      },
-      {
-        path: "/transactions?step=import&hide=true",
-        name: "Import",
-      },
-      { path: "/transactions?createTransaction=true", name: "Create new" },
-    ],
+    path: "/onboarding",
+    name: "Onboarding",
   },
   {
-    path: "/inbox",
-    name: "Inbox",
-    children: [{ path: "/inbox/settings", name: "Settings" }],
-  },
-  {
-    path: "/invoices",
-    name: "Invoices",
-    children: [
-      { path: "/invoices/products", name: "Products" },
-      { path: "/invoices?type=create", name: "Create new" },
-    ],
-  },
-  {
-    path: "/tracker",
-    name: "Tracker",
-    children: [{ path: "/tracker?create=true", name: "Create new" }],
-  },
-  {
-    path: "/customers",
-    name: "Customers",
-    children: [{ path: "/customers?createCustomer=true", name: "Create new" }],
+    path: "/credentials",
+    name: "Credentials",
+    children: [{ path: "/credentials?create=true", name: "Create new" }],
   },
   {
     path: "/vault",
     name: "Vault",
   },
   {
-    path: "/apps",
-    name: "Apps",
+    path: "/billing",
+    name: "Billing",
     children: [
-      { path: "/apps", name: "All" },
-      { path: "/apps?tab=installed", name: "Installed" },
+      { path: "/billing", name: "Invoices" },
+      { path: "/billing?tab=subscription", name: "Subscription" },
+      { path: "/billing?tab=payment", name: "Payment Method" },
     ],
   },
+  {
+    path: "/contracts",
+    name: "Contracts",
+    children: [
+      { path: "/contracts", name: "All Contracts" },
+      { path: "/contracts?status=pending", name: "Pending Signature" },
+    ],
+  },
+  {
+    path: "/support",
+    name: "Support",
+  },
+  // {
+    // path: "/apps",
+    // name: "Apps",
+    // children: [
+    //   { path: "/apps", name: "All" },
+    //   { path: "/apps?tab=installed", name: "Installed" },
+    // ],
+  // },
   {
     path: "/settings",
     name: "Settings",
@@ -99,11 +134,15 @@ const KNOWN_MENU_PATHS = [
   "/invoices",
   "/tracker",
   "/customers",
+  "/credentials",
+  "/billing",
+  "/contracts",
+  "/onboarding",
   "/vault",
+  "/support",
   "/apps",
   "/settings",
 ];
-
 interface ItemProps {
   item: {
     path: string;

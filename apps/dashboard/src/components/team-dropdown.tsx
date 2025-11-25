@@ -83,6 +83,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
           <AnimatePresence>
             {isActive && (
               <motion.div
+                key="add-team"
                 className="w-[32px] h-[32px] left-0 overflow-hidden absolute"
                 style={{ zIndex: 1 }}
                 initial={{ y: 0, opacity: 0 }}
@@ -107,7 +108,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
             )}
             {sortedTeams.map((team, index) => (
               <motion.div
-                key={team.id}
+                key={`team-${team.id}-${index}`}
                 className="w-[32px] h-[32px] left-0 overflow-hidden absolute"
                 style={{ zIndex: -index }}
                 initial={{

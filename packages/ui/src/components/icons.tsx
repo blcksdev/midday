@@ -16,6 +16,7 @@ import {
   MdChevronLeft,
   MdChevronRight,
   MdClose,
+  MdOutlineContactSupport,
   MdDescription,
   MdDownloading,
   MdDragIndicator,
@@ -599,4 +600,5 @@ export const Icons = {
   ShowChart: MdOutlineShowChart,
   PieChart: MdOutlinePieChart,
   ArrowDropDown: MdArrowDropDown,
+  Support: MdOutlineContactSupport,
 };

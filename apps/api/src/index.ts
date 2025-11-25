@@ -41,6 +41,28 @@ app.use(
   trpcServer({
     router: appRouter,
     createContext: createTRPCContext,
+    onError: ({ error, path, type, ctx }) => {
+      console.error("[TRPC Error]", {
+        message: error.message,
+        code: error.code,
+        path,
+        type,
+        originalError: error.originalError,
+        cause: error.cause,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+      });
+
+      // If it's a database error, log the underlying Postgres error
+      if (error.originalError) {
+        console.error("[TRPC Database Error]", {
+          originalError: error.originalError,
+          originalErrorMessage: error.originalError.message,
+          originalErrorStack: error.originalError.stack,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    },
   }),
 );
 

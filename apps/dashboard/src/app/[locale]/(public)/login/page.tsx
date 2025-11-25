@@ -3,8 +3,10 @@ import { ConsentBanner } from "@/components/consent-banner";
 import { GithubSignIn } from "@/components/github-sign-in";
 import { GoogleSignIn } from "@/components/google-sign-in";
 import { LoginAccordion } from "@/components/login-accordion";
-import LoginTestimonials from "@/components/login-testimonials";
+// import LoginTestimonials from "@/components/login-testimonials";
+import LoginTestimonialsBlcks from "@/components/login-testimonials-blcks";
 import { OTPSignIn } from "@/components/otp-sign-in";
+import { PasswordSignIn } from "@/components/password-sign-in";
 import { Cookies } from "@/utils/constants";
 import { isEU } from "@midday/location";
 import { Icons } from "@midday/ui/icons";
@@ -25,17 +27,7 @@ export default async function Page() {
   const { device } = userAgent({ headers: await headers() });
 
   let moreSignInOptions = null;
-  let preferredSignInOption =
-    device?.vendor === "Apple" ? (
-      <div className="flex flex-col space-y-3">
-        <GoogleSignIn showLastUsed={preferred?.value === "google"} />
-        <AppleSignIn showLastUsed={preferred?.value === "apple"} />
-      </div>
-    ) : (
-      <GoogleSignIn
-        showLastUsed={!preferred?.value || preferred?.value === "google"}
-      />
-    );
+  let preferredSignInOption = <PasswordSignIn showLastUsed={preferred?.value === "password"} />;
 
   switch (preferred?.value) {
     case "apple":
@@ -83,22 +75,14 @@ export default async function Page() {
       break;
 
     default:
-      if (device?.vendor === "Apple") {
-        moreSignInOptions = (
-          <>
-            <GithubSignIn />
-            <OTPSignIn className="border-t-[1px] border-border pt-8" />
-          </>
-        );
-      } else {
-        moreSignInOptions = (
-          <>
-            <AppleSignIn />
-            <GithubSignIn />
-            <OTPSignIn className="border-t-[1px] border-border pt-8" />
-          </>
-        );
-      }
+      moreSignInOptions = (
+        <>
+          <GoogleSignIn />
+          <AppleSignIn />
+          <GithubSignIn />
+          <OTPSignIn className="border-t-[1px] border-border pt-8" />
+        </>
+      );
   }
 
   return (
@@ -133,7 +117,7 @@ export default async function Page() {
         {/* Content overlay */}
         <div className="relative z-10 flex flex-col justify-center items-center p-2 text-center h-full w-full">
           <div className="max-w-lg">
-            <LoginTestimonials />
+            <LoginTestimonialsBlcks />
           </div>
         </div>
       </div>

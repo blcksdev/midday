@@ -52,6 +52,11 @@ export async function withRetryOnPrimary<T>(
         } catch (error) {
           lastError = error;
 
+          console.error(
+            "[withRetryOnPrimary] Error on primary retry when result was null:",
+            error,
+          );
+
           // Don't retry on the last attempt
           if (attempt === maxRetries) {
             break;
@@ -75,6 +80,8 @@ export async function withRetryOnPrimary<T>(
     return result;
   } catch (error) {
     lastError = error;
+
+    console.error("[withRetryOnPrimary] Error on replica attempt:", error);
 
     // Check if this is a retryable error
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -103,6 +110,11 @@ export async function withRetryOnPrimary<T>(
       return await fn(primaryDb);
     } catch (error) {
       lastError = error;
+
+      console.error(
+        "[withRetryOnPrimary] Error on primary attempt during retry loop:",
+        error,
+      );
 
       // Don't retry on the last attempt
       if (attempt === maxRetries) {
